@@ -4,6 +4,8 @@ import com.vieiradev.TodoList.model.User;
 import com.vieiradev.TodoList.repository.UserRepository;
 import com.vieiradev.TodoList.valitadotor.UserValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +56,21 @@ public class UserService {
         }
 
         return repository.findAll();
+    }
+
+    public List<User> searchByExample(String name, String email) {
+        var user = new User();
+        user.setName(name);
+        user.setEmail(email);
+
+        ExampleMatcher matcher = ExampleMatcher
+                .matching()
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Example<User> userExample = Example.of(user, matcher);
+
+        return repository.findAll(userExample);
     }
 
     public void update(User user){

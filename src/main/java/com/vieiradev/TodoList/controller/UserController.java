@@ -6,6 +6,7 @@ import com.vieiradev.TodoList.dto.user.UserResponseErrorDTO;
 import com.vieiradev.TodoList.exceptions.DuplicatedRegisterException;
 import com.vieiradev.TodoList.model.User;
 import com.vieiradev.TodoList.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class UserController {
 //    }
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody UserDTO user) {
+    public ResponseEntity<Object> save(@RequestBody @Valid UserDTO user) {
         try {
             User newUser = user.mapping();
             service.save(newUser);
@@ -73,7 +74,7 @@ public class UserController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "email", required = false) String email
     ){
-        List<User> result = service.list(name, email);
+        List<User> result = service.searchByExample(name, email);
 
         List<UserResponseDTO> users = result.stream()
                 .map(UserResponseDTO::from)
